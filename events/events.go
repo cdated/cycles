@@ -1,4 +1,4 @@
-package main
+package events
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ func NewEvent(name string) *Event {
 		},
 		complete:  false,
 		recurring: false,
-		frequency: time.Minute * 2,
+		frequency: time.Minute * 0,
 	}
 	return &e
 }
