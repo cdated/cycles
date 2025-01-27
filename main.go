@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/cdated/cycles/db"
 	"github.com/cdated/cycles/events"
-	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -40,12 +40,19 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DB_URL"))
+	connString := os.Getenv("DB_URL")
+	pg, err := db.NewPG(context.Background(), connString)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		log.Fatal(err)
+	}
+
+	fmt.Println("Get users")
+	users, err := pg.GetUsers(context.Background())
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to query database: %v\n", err)
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
+	fmt.Printf("Users: %v\n", users)
 
 	// Add sample events
 	eventOps()
